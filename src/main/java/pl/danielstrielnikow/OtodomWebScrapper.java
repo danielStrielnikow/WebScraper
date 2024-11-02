@@ -2,30 +2,44 @@ package pl.danielstrielnikow;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.jsoup.nodes.Element;
+
 public class OtodomWebScrapper {
 
-    private final String url = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/gliwice/gliwice/gliwice?limit=36&ownerTypeSingleSelect=ALL&priceMax=500000&areaMax=50&by=DEFAULT&direction=DESC&viewType=listing";
-    final int SIZE = 20;
-    public List<Offer> getOffers() throws IOException {
-        Document document = Jsoup.connect(url).get();
+    private final String url = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/gliwice/gliwice/gliwice/sosnica?limit=36&ownerTypeSingleSelect=ALL&by=DEFAULT&direction=DESC&viewType=listing";
+    final int MAX_PAGES = 10; // Maksymalna liczba stron do przetworzenia
 
-        List<String> links = getOffersLinksFromDocument(document)
-                .subList(0, SIZE);
-        if (links.isEmpty()) {
-            System.out.println("Brak ofert do przetworzenia.");
-            return List.of(); // lub throw new NoSuchElementException("No offers found.");
+    public List<Offer> getOffers() throws IOException {
+        List<String> allLinks = new ArrayList<>();
+        int page = 1;
+
+
+        while (page <= MAX_PAGES) {
+            Document document = Jsoup.connect(url + "&page=" + page).get();
+            List<String> links = getOffersLinksFromDocument(document);
+
+            if (links.isEmpty()) {
+                break; // Brak więcej ofert
+            }
+
+            allLinks.addAll(links);
+            page++; // Przechodzimy do następnej strony
         }
 
-        return links.stream()
+        // Ostatecznie ograniczamy do 30 ofert lub jakiejkolwiek innej liczby
+        return allLinks.stream()
                 .map(this::createOffering)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
     }
+
 
     private static List<String> getOffersLinksFromDocument(Document document) {
         return document.getElementsByAttributeValue("data-cy", "listing-item-link").stream()
@@ -49,7 +63,7 @@ public class OtodomWebScrapper {
             String description = (descriptionElement != null) ? descriptionElement.text() : "Brak opisu";
 
             // Uzyskiwanie adresu
-            Element addressElement = document.getElementsByAttributeValue("aria-label", "Adres").first();
+            Element addressElement = document.select("a.css-1jjm9oe.e42rcgs1").first();
             String address = (addressElement != null) ? addressElement.text() : "Brak adresu";
 
             return Optional.of(new Offer(link, name, description, address));

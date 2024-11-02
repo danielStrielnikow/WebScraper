@@ -4,7 +4,7 @@ import java.util.List;
 
 public record Offer(String url, String name, String description, String address) {
 
-    public boolean containsBlockedWords(List<String> blockedWords) {
+    public boolean containsWords(List<String> blockedWords) {
         return blockedWords.stream()
                 .map(String::toLowerCase)
                 .anyMatch(blockedWord ->

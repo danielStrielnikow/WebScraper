@@ -14,7 +14,9 @@ public class Main {
         List<Offer> filtered = offersFilter.filter(offers);
 
         System.out.println("Przefiltrowane ofery:");
-        filtered.forEach(System.out::println);
+        filtered.stream()
+                .map(o -> o.url() + " " + o.address())
+                .forEach(System.out::println);
 
     }
 }
