@@ -4,8 +4,7 @@ import java.util.List;
 
 public class OffersFilter {
 
-    private final List<String> blockedWords = List.of("ogrzewanie własne", "ogrzewanie elektryczne",
-            "ogrzewania elektronicznego", "ogrzewaniem", "ogrzenia gazowe");
+    private final List<String> blockedWords = List.of("gazowe", "ogrzenia gazowe", "na gaz");
 
     private final List<String> allowedNeighbourhoods = List.of("Sośnica", "sośnica");
 

@@ -11,9 +11,6 @@ public class Main {
 
         List<Offer> offers = scraper.getOffers();
 
-        System.out.println("Nieprzefiltrowane:");
-        offers.forEach(System.out::println);
-
         List<Offer> filtered = offersFilter.filter(offers);
 
         System.out.println("Przefiltrowane ofery:");

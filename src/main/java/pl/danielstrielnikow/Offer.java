@@ -19,3 +19,4 @@ public record Offer(String url, String name, String description, String address)
                 .anyMatch(neighbourhood -> address.toLowerCase().contains(neighbourhood));
     }
 }
+
