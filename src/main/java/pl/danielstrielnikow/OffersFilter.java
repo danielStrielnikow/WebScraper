@@ -6,11 +6,11 @@ public class OffersFilter {
 
     private final List<String> blockedWords = List.of("gazowe", "ogrzenia gazowe", "na gaz");
 
-    private final List<String> allowedNeighbourhoods = List.of("Sośnica");
+    private final List<String> isInAllowedNeighbourhoods = List.of("Sośnica");
 
     public List<Offer> filter(List<Offer> offers) {
         List<Offer> resultList = offers.stream()
-                .filter(offer -> !offer.containsWords(blockedWords) && offer.containsWords(allowedNeighbourhoods))
+                .filter(offer -> !offer.containsWords(blockedWords) && offer.containsWords(isInAllowedNeighbourhoods))
                 .toList();
 
         if (offers.size() != resultList.size()) {

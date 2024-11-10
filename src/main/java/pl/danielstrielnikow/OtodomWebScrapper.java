@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,14 +15,13 @@ public class OtodomWebScrapper {
 
     private final String url = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/gliwice/gliwice/gliwice/sosnica?limit=36&ownerTypeSingleSelect=ALL&by=DEFAULT&direction=DESC&viewType=listing";
     final int MAX_PAGES = 10; // Maksymalna liczba stron do przetworzenia
-
+    int PAGE = 1;
     public List<Offer> getOffers() throws IOException {
-        List<String> allLinks = new ArrayList<>();
-        int page = 1;
+        // Używamy HashSet do przechowywania linków, aby eliminować duplikaty
+        var allLinks = new HashSet<String>();
 
-
-        while (page <= MAX_PAGES) {
-            Document document = Jsoup.connect(url + "&page=" + page).get();
+        while (PAGE <= MAX_PAGES) {
+            Document document = Jsoup.connect(url + "&page=" + PAGE).get();
             List<String> links = getOffersLinksFromDocument(document);
 
             if (links.isEmpty()) {
@@ -29,10 +29,10 @@ public class OtodomWebScrapper {
             }
 
             allLinks.addAll(links);
-            page++; // Przechodzimy do następnej strony
+            PAGE++; // Przechodzimy do następnej strony
         }
 
-        // Ostatecznie ograniczamy do 30 ofert lub jakiejkolwiek innej liczby
+
         return allLinks.stream()
                 .map(this::createOffering)
                 .filter(Optional::isPresent)
